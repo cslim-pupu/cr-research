@@ -1,0 +1,18 @@
+2025-08-19 17:21:51.697 | INFO     | wechat_copyright_analyzer:analyze_article:337 - 开始分析文章: https://mp.weixin.qq.com/s/Z_qG2JJr-zCU5ZU-pWrqEQ
+2025-08-19 17:21:52.596 | ERROR    | __main__:analyze:50 - 分析过程中出现错误: Couldn't find a tree builder with the features you requested: lxml. Do you need to install a parser library?
+2025-08-19 17:23:15.304 | INFO     | wechat_copyright_analyzer:analyze_article:337 - 开始分析文章: https://mp.weixin.qq.com/s/Z_qG2JJr-zCU5ZU-pWrqEQ
+2025-08-19 17:23:15.979 | INFO     | wechat_copyright_analyzer:analyze_article:360 - 分析完成: 张若昀唐艺昕，怎么回事？
+2025-08-19 17:32:29.322 | INFO     | wechat_copyright_analyzer:analyze_article:337 - 开始分析文章: https://mp.weixin.qq.com/s/G31Rcu2pZlEbqOdoMK2x0A
+2025-08-19 17:32:30.261 | INFO     | wechat_copyright_analyzer:analyze_article:360 - 分析完成: 今天你Emoji了没
+2025-08-19 17:32:38.164 | INFO     | html_code_analyzer:analyze_html_code:451 - 开始分析HTML源代码: https://mp.weixin.qq.com/s/G31Rcu2pZlEbqOdoMK2x0A
+2025-08-19 17:32:39.048 | INFO     | html_code_analyzer:analyze_html_code:485 - HTML源代码分析完成
+2025-08-19 17:33:17.691 | INFO     | html_code_analyzer:analyze_html_code:451 - 开始分析HTML源代码: https://mp.weixin.qq.com/s/Pb-4HyQpQ62MQtZgdaBg5g
+2025-08-19 17:33:18.499 | INFO     | html_code_analyzer:analyze_html_code:485 - HTML源代码分析完成
+2025-08-19 17:35:35.952 | INFO     | html_code_analyzer:analyze_html_code:476 - 开始分析HTML源代码: https://mp.weixin.qq.com/s/Pb-4HyQpQ62MQtZgdaBg5g
+2025-08-19 17:35:36.793 | INFO     | html_code_analyzer:analyze_html_code:510 - HTML源代码分析完成
+2025-08-19 17:35:53.647 | INFO     | html_code_analyzer:analyze_html_code:476 - 开始分析HTML源代码: https://mp.weixin.qq.com/s/rJW7oxRGSBjImg6x9BU0DA
+2025-08-19 17:35:54.338 | INFO     | html_code_analyzer:analyze_html_code:510 - HTML源代码分析完成
+2025-08-19 17:47:32.435 | INFO     | html_code_analyzer:analyze_html_code:501 - 开始分析HTML源代码: https://mp.weixin.qq.com/s/Df0t_IE2-U-fpLKwV2wY4w
+2025-08-19 17:47:33.376 | INFO     | html_code_analyzer:analyze_html_code:535 - HTML源代码分析完成
+2025-08-19 17:57:49.761 | INFO     | html_code_analyzer:analyze_html_code:501 - 开始分析HTML源代码: https://mp.weixin.qq.com/s/vkF-J6F7_WhcH8YEEuzHgQ
+2025-08-19 17:57:50.884 | INFO     | html_code_analyzer:analyze_html_code:535 - HTML源代码分析完成

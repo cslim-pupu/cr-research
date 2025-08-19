@@ -1,0 +1,48 @@
+2025-08-19 17:32:29.322 | INFO     | wechat_copyright_analyzer:analyze_article:337 - 开始分析文章: https://mp.weixin.qq.com/s/G31Rcu2pZlEbqOdoMK2x0A
+2025-08-19 17:32:30.261 | INFO     | wechat_copyright_analyzer:analyze_article:360 - 分析完成: 今天你Emoji了没
+2025-08-19 17:32:38.164 | INFO     | html_code_analyzer:analyze_html_code:451 - 开始分析HTML源代码: https://mp.weixin.qq.com/s/G31Rcu2pZlEbqOdoMK2x0A
+2025-08-19 17:32:39.048 | INFO     | html_code_analyzer:analyze_html_code:485 - HTML源代码分析完成
+2025-08-19 17:33:17.691 | INFO     | html_code_analyzer:analyze_html_code:451 - 开始分析HTML源代码: https://mp.weixin.qq.com/s/Pb-4HyQpQ62MQtZgdaBg5g
+2025-08-19 17:33:18.499 | INFO     | html_code_analyzer:analyze_html_code:485 - HTML源代码分析完成
+2025-08-19 17:34:26.851 | INFO     | __main__:analyze_html_code:451 - 开始分析HTML源代码: https://mp.weixin.qq.com/s/Pb-4HyQpQ62MQtZgdaBg5g
+2025-08-19 17:34:27.796 | INFO     | __main__:analyze_html_code:485 - HTML源代码分析完成
+2025-08-19 17:34:54.491 | INFO     | __main__:analyze_html_code:476 - 开始分析HTML源代码: https://mp.weixin.qq.com/s/Pb-4HyQpQ62MQtZgdaBg5g
+2025-08-19 17:34:55.298 | INFO     | __main__:analyze_html_code:510 - HTML源代码分析完成
+2025-08-19 17:35:35.952 | INFO     | html_code_analyzer:analyze_html_code:476 - 开始分析HTML源代码: https://mp.weixin.qq.com/s/Pb-4HyQpQ62MQtZgdaBg5g
+2025-08-19 17:35:36.793 | INFO     | html_code_analyzer:analyze_html_code:510 - HTML源代码分析完成
+2025-08-19 17:35:53.647 | INFO     | html_code_analyzer:analyze_html_code:476 - 开始分析HTML源代码: https://mp.weixin.qq.com/s/rJW7oxRGSBjImg6x9BU0DA
+2025-08-19 17:35:54.338 | INFO     | html_code_analyzer:analyze_html_code:510 - HTML源代码分析完成
+2025-08-19 17:37:06.646 | INFO     | __main__:analyze_html_code:476 - 开始分析HTML源代码: https://mp.weixin.qq.com/s/rJW7oxRGSBjImg6x9BU0DA
+2025-08-19 17:37:07.556 | INFO     | __main__:analyze_html_code:510 - HTML源代码分析完成
+2025-08-19 17:38:25.737 | INFO     | __main__:analyze_html_code:481 - 开始分析HTML源代码: https://mp.weixin.qq.com/s/rJW7oxRGSBjImg6x9BU0DA
+2025-08-19 17:38:26.934 | INFO     | __main__:analyze_html_code:515 - HTML源代码分析完成
+2025-08-19 17:39:16.851 | INFO     | __main__:analyze_html_code:501 - 开始分析HTML源代码: https://mp.weixin.qq.com/s/rJW7oxRGSBjImg6x9BU0DA
+2025-08-19 17:39:17.893 | INFO     | __main__:analyze_html_code:535 - HTML源代码分析完成
+2025-08-19 17:47:32.435 | INFO     | html_code_analyzer:analyze_html_code:501 - 开始分析HTML源代码: https://mp.weixin.qq.com/s/Df0t_IE2-U-fpLKwV2wY4w
+2025-08-19 17:47:33.376 | INFO     | html_code_analyzer:analyze_html_code:535 - HTML源代码分析完成
+2025-08-19 17:57:49.761 | INFO     | html_code_analyzer:analyze_html_code:501 - 开始分析HTML源代码: https://mp.weixin.qq.com/s/vkF-J6F7_WhcH8YEEuzHgQ
+2025-08-19 17:57:50.884 | INFO     | html_code_analyzer:analyze_html_code:535 - HTML源代码分析完成
+2025-08-19 22:02:18.701 | INFO     | html_code_analyzer:analyze_html_code:501 - 开始分析HTML源代码: https://mp.weixin.qq.com/s/vkF-J6F7_WhcH8YEEuzHgQ
+2025-08-19 22:02:20.136 | INFO     | html_code_analyzer:analyze_html_code:535 - HTML源代码分析完成
+2025-08-19 22:03:57.350 | INFO     | html_code_analyzer:analyze_html_code:501 - 开始分析HTML源代码: https://mp.weixin.qq.com/s/BEBfwzeWzpGAL3aejksimw
+2025-08-19 22:03:58.537 | INFO     | html_code_analyzer:analyze_html_code:535 - HTML源代码分析完成
+2025-08-19 22:05:26.514 | INFO     | html_code_analyzer:analyze_html_code:501 - 开始分析HTML源代码: https://mp.weixin.qq.com/s/cRlo-16S1-R-fs3HoVG02Q
+2025-08-19 22:05:27.396 | INFO     | html_code_analyzer:analyze_html_code:535 - HTML源代码分析完成
+2025-08-19 22:06:09.000 | INFO     | __main__:analyze_html_code:501 - 开始分析HTML源代码: https://mp.weixin.qq.com/s/cRlo-16S1-R-fs3HoVG02Q
+2025-08-19 22:06:09.865 | INFO     | __main__:analyze_html_code:535 - HTML源代码分析完成
+2025-08-19 22:06:28.241 | INFO     | __main__:analyze_html_code:501 - 开始分析HTML源代码: https://mp.weixin.qq.com/s/cRlo-16S1-R-fs3HoVG02Q
+2025-08-19 22:06:29.170 | INFO     | __main__:analyze_html_code:535 - HTML源代码分析完成
+2025-08-19 22:07:01.608 | INFO     | html_code_analyzer:analyze_html_code:501 - 开始分析HTML源代码: https://mp.weixin.qq.com/s/w7XCoHteIoENsikgF-6MTA
+2025-08-19 22:07:02.502 | INFO     | html_code_analyzer:analyze_html_code:535 - HTML源代码分析完成
+2025-08-19 22:11:13.565 | INFO     | html_code_analyzer:analyze_html_code:501 - 开始分析HTML源代码: https://mp.weixin.qq.com/s/PNvvLTW_gcMtZLf311GxgQ
+2025-08-19 22:11:14.665 | INFO     | html_code_analyzer:analyze_html_code:535 - HTML源代码分析完成
+2025-08-19 22:12:41.989 | INFO     | html_code_analyzer:analyze_html_code:501 - 开始分析HTML源代码: https://mp.weixin.qq.com/s/ORbLc3WY1dr9JV0DLmP03w
+2025-08-19 22:12:42.856 | INFO     | html_code_analyzer:analyze_html_code:535 - HTML源代码分析完成
+2025-08-19 22:12:52.372 | INFO     | html_code_analyzer:analyze_html_code:501 - 开始分析HTML源代码: https://mp.weixin.qq.com/s/N0ckIIyW0bib89MK3JRoAg
+2025-08-19 22:12:53.094 | INFO     | html_code_analyzer:analyze_html_code:535 - HTML源代码分析完成
+2025-08-19 22:13:01.980 | INFO     | html_code_analyzer:analyze_html_code:501 - 开始分析HTML源代码: https://mp.weixin.qq.com/s/6lTM_f7ZQyzy3xf-L6WuZw
+2025-08-19 22:13:02.574 | INFO     | html_code_analyzer:analyze_html_code:535 - HTML源代码分析完成
+2025-08-19 22:15:45.105 | INFO     | html_code_analyzer:analyze_html_code:501 - 开始分析HTML源代码: https://mp.weixin.qq.com/s/zKzmj98vE3pivEb18OocjQ?scene=1&click_id=439
+2025-08-19 22:15:45.951 | INFO     | html_code_analyzer:analyze_html_code:535 - HTML源代码分析完成
+2025-08-19 22:16:00.614 | INFO     | html_code_analyzer:analyze_html_code:501 - 开始分析HTML源代码: https://mp.weixin.qq.com/s/fd4_j1z5hF8AA2BuSxWv3A?scene=1&click_id=440
+2025-08-19 22:16:01.429 | INFO     | html_code_analyzer:analyze_html_code:535 - HTML源代码分析完成

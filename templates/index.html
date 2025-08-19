@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>微信公众号文章版权分析器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .input-group {
+            margin-bottom: 30px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 500;
+            color: #333;
+            font-size: 1.1em;
+        }
+        
+        .analysis-description {
+            margin-top: 10px;
+        }
+        
+        .desc-item {
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #666;
+            border-left: 3px solid #667eea;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+        
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            width: 100%;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .loading .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .result {
+            display: none;
+            margin-top: 30px;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .result h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        .result-item {
+            margin-bottom: 15px;
+            padding: 10px;
+            background: white;
+            border-radius: 5px;
+            border: 1px solid #e1e5e9;
+        }
+        
+        .result-item strong {
+            color: #667eea;
+            display: inline-block;
+            min-width: 100px;
+        }
+        
+        .error {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            border-radius: 8px;
+        }
+        
+        .copyright-section {
+            margin-top: 20px;
+        }
+        
+        .copyright-section h4 {
+            color: #495057;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        .copyright-list {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .copyright-list li {
+            padding: 8px 12px;
+            margin-bottom: 5px;
+            background: #e9ecef;
+            border-radius: 4px;
+            border-left: 3px solid #667eea;
+        }
+        
+        .author-info {
+            background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .confidence-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            background: #28a745;
+            color: white;
+            border-radius: 12px;
+            font-size: 0.8em;
+            margin-left: 10px;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                margin: 10px;
+                border-radius: 10px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📄 版权分析器</h1>
+            <p>分析微信公众号文章的版权信息和作者身份</p>
+        </div>
+        
+        <div class="content">
+            <form id="analyzeForm">
+                <div class="input-group">
+                    <label for="articleUrl">微信公众号文章链接：</label>
+                    <input 
+                        type="url" 
+                        id="articleUrl" 
+                        name="articleUrl" 
+                        placeholder="请输入微信公众号文章链接，例如：https://mp.weixin.qq.com/s/..."
+                        required
+                    >
+                </div>
+                
+                <div class="input-group">
+                    <label>分析类型:</label>
+                    <div class="analysis-description">
+                        <div class="desc-item active">分析页面HTML源代码中的版权信息和开发者信息</div>
+                    </div>
+                    <input type="hidden" name="analysis_type" value="html_code">
+                </div>
+                
+                <button type="submit" class="btn" id="analyzeBtn">
+                    🔍 开始分析
+                </button>
+            </form>
+            
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>正在分析文章，请稍候...</p>
+            </div>
+            
+            <div class="error" id="error"></div>
+            
+            <div class="result" id="result">
+                <h3>📊 分析结果</h3>
+                <div id="resultContent"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // HTML源代码分析专用界面，无需切换逻辑
+        
+        document.getElementById('analyzeForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const url = document.getElementById('articleUrl').value.trim();
+            const analyzeBtn = document.getElementById('analyzeBtn');
+            const loading = document.getElementById('loading');
+            const error = document.getElementById('error');
+            const result = document.getElementById('result');
+            
+            // 重置状态
+            loading.style.display = 'none';
+            error.style.display = 'none';
+            result.style.display = 'none';
+            
+            if (!url) {
+                showError('请输入文章链接');
+                return;
+            }
+            
+            // 开始分析
+            analyzeBtn.disabled = true;
+            analyzeBtn.textContent = '分析中...';
+            loading.style.display = 'block';
+            
+            try {
+                const response = await fetch('/analyze', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                        url: url,
+                        analysis_type: 'html_code'
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    showHTMLAnalysisResult(data.data, document.getElementById('resultContent'));
+                    document.getElementById('result').style.display = 'block';
+                } else {
+                    showError(data.error || '分析失败');
+                }
+                
+            } catch (err) {
+                showError('网络错误，请稍后重试');
+            } finally {
+                analyzeBtn.disabled = false;
+                analyzeBtn.textContent = '🔍 开始分析';
+                loading.style.display = 'none';
+            }
+        });
+        
+        function showError(message) {
+            const error = document.getElementById('error');
+            error.textContent = message;
+            error.style.display = 'block';
+        }
+        
+        function showResult(data) {
+            const result = document.getElementById('result');
+            const resultContent = document.getElementById('resultContent');
+            
+            // 判断分析类型
+            const analysisType = document.querySelector('input[name="analysis_type"]:checked').value;
+            
+            if (analysisType === 'html_code') {
+                showHTMLAnalysisResult(data, resultContent);
+            } else {
+                showContentAnalysisResult(data, resultContent);
+            }
+            
+            result.style.display = 'block';
+        }
+        
+        function showHTMLAnalysisResult(data, resultContent) {
+            let html = `
+                <div class="result-item">
+                    <strong>分析类型：</strong>HTML源代码分析
+                </div>
+                <div class="result-item">
+                    <strong>URL：</strong>${data.url || '未知'}
+                </div>
+                <div class="result-item">
+                    <strong>HTML大小：</strong>${data.html_size || '未知'} 字符
+                </div>
+            `;
+            
+            // 开发信息
+            if (data.development_info) {
+                const devInfo = data.development_info;
+                html += '<div class="author-info">';
+                html += '<h4>👨‍💻 开发信息</h4>';
+                
+                if (devInfo.primary_author) {
+                    html += `<p><strong>主要作者：</strong>${devInfo.primary_author.name}
+                    <span class="confidence-badge">置信度: ${(devInfo.primary_author.confidence * 100).toFixed(0)}%</span></p>`;
+                }
+                
+                if (devInfo.all_authors?.length > 0) {
+                    html += '<p><strong>所有作者：</strong></p><ul class="copyright-list">';
+                    devInfo.all_authors.forEach(author => {
+                        html += `<li>${author}</li>`;
+                    });
+                    html += '</ul>';
+                }
+                
+                if (devInfo.copyright_holders?.length > 0) {
+                    html += '<p><strong>版权持有者：</strong></p><ul class="copyright-list">';
+                    devInfo.copyright_holders.forEach(holder => {
+                        html += `<li>${holder}</li>`;
+                    });
+                    html += '</ul>';
+                }
+                
+                if (devInfo.frameworks_used?.length > 0) {
+                    html += '<p><strong>使用的框架/库：</strong></p><ul class="copyright-list">';
+                    devInfo.frameworks_used.forEach(framework => {
+                        html += `<li>${framework}</li>`;
+                    });
+                    html += '</ul>';
+                }
+                
+                html += `<p><strong>整体置信度：</strong>${(devInfo.confidence_score * 100).toFixed(1)}%</p>`;
+                html += '</div>';
+            }
+            
+            // HTML分析详情
+            if (data.html_analysis) {
+                const analysis = data.html_analysis;
+                
+                // HTML注释
+                if (analysis.html_comments && (analysis.html_comments.copyright_statements?.length > 0 || analysis.html_comments.author_mentions?.length > 0)) {
+                    html += '<div class="copyright-section">';
+                    html += '<h4>💬 HTML注释分析</h4>';
+                    
+                    if (analysis.html_comments.copyright_statements?.length > 0) {
+                        html += '<p><strong>版权声明：</strong></p><ul class="copyright-list">';
+                        analysis.html_comments.copyright_statements.forEach(statement => {
+                            html += `<li>${statement}</li>`;
+                        });
+                        html += '</ul>';
+                    }
+                    
+                    if (analysis.html_comments.author_mentions?.length > 0) {
+                        html += '<p><strong>作者提及：</strong></p><ul class="copyright-list">';
+                        analysis.html_comments.author_mentions.forEach(author => {
+                            html += `<li>${author}</li>`;
+                        });
+                        html += '</ul>';
+                    }
+                    
+                    html += '</div>';
+                }
+                
+                // Meta标签
+                if (analysis.meta_tags && (analysis.meta_tags.meta_author?.length > 0 || analysis.meta_tags.meta_copyright?.length > 0)) {
+                    html += '<div class="copyright-section">';
+                    html += '<h4>🏷️ Meta标签信息</h4>';
+                    
+                    if (analysis.meta_tags.meta_author?.length > 0) {
+                        html += '<p><strong>Meta作者：</strong></p><ul class="copyright-list">';
+                        analysis.meta_tags.meta_author.forEach(author => {
+                            html += `<li>${author}</li>`;
+                        });
+                        html += '</ul>';
+                    }
+                    
+                    if (analysis.meta_tags.meta_copyright?.length > 0) {
+                        html += '<p><strong>Meta版权：</strong></p><ul class="copyright-list">';
+                        analysis.meta_tags.meta_copyright.forEach(copyright => {
+                            html += `<li>${copyright}</li>`;
+                        });
+                        html += '</ul>';
+                    }
+                    
+                    html += '</div>';
+                }
+            }
+            
+            html += `
+                <div class="result-item">
+                    <strong>分析时间：</strong>${data.analysis_time}
+                </div>
+            `;
+            
+            resultContent.innerHTML = html;
+        }
+        
+
+        
+        function getSourceText(source) {
+            const sourceMap = {
+                'article_metadata': '文章元数据',
+                'copyright_statement': '版权声明',
+                'copyright_owner': '版权所有者'
+            };
+            return sourceMap[source] || source;
+        }
+    </script>
+</body>
+</html>

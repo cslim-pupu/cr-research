@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: html-copyright-analyzer
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn --bind 0.0.0.0:$PORT web_app:app
+    plan: free
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: PORT
+        generateValue: true
+    healthCheckPath: /health
+    autoDeploy: true
+    disk:
+      name: html-analyzer-disk
+      mountPath: /opt/render/project/src
+      sizeGB: 1
