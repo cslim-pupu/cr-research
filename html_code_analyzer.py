@@ -318,7 +318,7 @@ class HTMLCodeAnalyzer:
         for elem in all_elements:
             if elem.attrs:
                 # 查找版权相关属性
-                copyright_attrs = ['copyright', 'data-copyright', 'powered-by', 'data-powered-by']
+                copyright_attrs = ['copyright', 'data-copyright', 'powered-by', 'data-powered-by', 'label']
                 for attr_name in copyright_attrs:
                     if attr_name in elem.attrs:
                         attr_value = elem.get(attr_name)
