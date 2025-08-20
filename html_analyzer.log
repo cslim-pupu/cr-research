@@ -1,0 +1,204 @@
+2025-08-20 10:47:52.006 | INFO     | html_code_analyzer:analyze_html_code:440 - Starting analysis for URL: https://mp.weixin.qq.com/s/H-0WoSdhMCIR5izZyTsKlg
+2025-08-20 10:47:52.678 | INFO     | html_code_analyzer:fetch_html_source:81 - Detected dynamic content, using Selenium
+2025-08-20 10:47:55.296 | INFO     | html_code_analyzer:_init_selenium_driver:55 - Selenium WebDriver initialized successfully
+2025-08-20 10:48:00.064 | ERROR    | html_code_analyzer:_fetch_with_selenium:108 - Failed to fetch with Selenium: Message: invalid session id: session deleted as the browser has closed the connection
+from disconnected: not connected to DevTools
+  (Session info: chrome=139.0.7258.128); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#invalidsessionidexception
+Stacktrace:
+0   chromedriver                        0x0000000103180c20 cxxbridge1$str$ptr + 2747652
+1   chromedriver                        0x0000000103178b20 cxxbridge1$str$ptr + 2714628
+2   chromedriver                        0x0000000102cc10c8 cxxbridge1$string$len + 90536
+3   chromedriver                        0x0000000102caab18 chromedriver + 207640
+4   chromedriver                        0x0000000102ccdbe4 cxxbridge1$string$len + 142532
+5   chromedriver                        0x0000000102d308c0 cxxbridge1$string$len + 547232
+6   chromedriver                        0x0000000102d494fc cxxbridge1$string$len + 648668
+7   chromedriver                        0x0000000102cfc934 cxxbridge1$string$len + 334356
+8   chromedriver                        0x000000010314388c cxxbridge1$str$ptr + 2496880
+9   chromedriver                        0x0000000103146ab8 cxxbridge1$str$ptr + 2509724
+10  chromedriver                        0x0000000103124510 cxxbridge1$str$ptr + 2369012
+11  chromedriver                        0x0000000103147360 cxxbridge1$str$ptr + 2511940
+12  chromedriver                        0x0000000103115610 cxxbridge1$str$ptr + 2307828
+13  chromedriver                        0x0000000103167230 cxxbridge1$str$ptr + 2642708
+14  chromedriver                        0x00000001031673bc cxxbridge1$str$ptr + 2643104
+15  chromedriver                        0x000000010317876c cxxbridge1$str$ptr + 2713680
+16  libsystem_pthread.dylib             0x00000001842cd034 _pthread_start + 136
+17  libsystem_pthread.dylib             0x00000001842c7e3c thread_start + 8
+
+2025-08-20 11:44:51.590 | INFO     | html_code_analyzer:analyze_html_code:440 - Starting analysis for URL: https://mp.weixin.qq.com/s/H-0WoSdhMCIR5izZyTsKlg
+2025-08-20 11:44:52.449 | INFO     | html_code_analyzer:fetch_html_source:81 - Detected dynamic content, using Selenium
+2025-08-20 11:44:52.451 | ERROR    | html_code_analyzer:_fetch_with_selenium:108 - Failed to fetch with Selenium: Message: invalid session id; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#invalidsessionidexception
+Stacktrace:
+0   chromedriver                        0x0000000103180c20 cxxbridge1$str$ptr + 2747652
+1   chromedriver                        0x0000000103178b20 cxxbridge1$str$ptr + 2714628
+2   chromedriver                        0x0000000102cc0f3c cxxbridge1$string$len + 90140
+3   chromedriver                        0x0000000102cfbdf8 cxxbridge1$string$len + 331480
+4   chromedriver                        0x0000000102d243e4 cxxbridge1$string$len + 496836
+5   chromedriver                        0x0000000102d236ec cxxbridge1$string$len + 493516
+6   chromedriver                        0x0000000102c9019c chromedriver + 98716
+7   chromedriver                        0x000000010314388c cxxbridge1$str$ptr + 2496880
+8   chromedriver                        0x0000000103146ab8 cxxbridge1$str$ptr + 2509724
+9   chromedriver                        0x0000000103124510 cxxbridge1$str$ptr + 2369012
+10  chromedriver                        0x0000000103147360 cxxbridge1$str$ptr + 2511940
+11  chromedriver                        0x0000000103115610 cxxbridge1$str$ptr + 2307828
+12  chromedriver                        0x0000000102c8e434 chromedriver + 91188
+13  dyld                                0x0000000183f510e0 start + 2360
+
+2025-08-20 11:46:17.366 | INFO     | html_code_analyzer:analyze_html_code:440 - Starting analysis for URL: https://mp.weixin.qq.com/s/H-0WoSdhMCIR5izZyTsKlg
+2025-08-20 11:46:18.053 | INFO     | html_code_analyzer:fetch_html_source:81 - Detected dynamic content, using Selenium
+2025-08-20 11:46:18.055 | ERROR    | html_code_analyzer:_fetch_with_selenium:108 - Failed to fetch with Selenium: Message: invalid session id; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#invalidsessionidexception
+Stacktrace:
+0   chromedriver                        0x0000000103180c20 cxxbridge1$str$ptr + 2747652
+1   chromedriver                        0x0000000103178b20 cxxbridge1$str$ptr + 2714628
+2   chromedriver                        0x0000000102cc0f3c cxxbridge1$string$len + 90140
+3   chromedriver                        0x0000000102cfbdf8 cxxbridge1$string$len + 331480
+4   chromedriver                        0x0000000102d243e4 cxxbridge1$string$len + 496836
+5   chromedriver                        0x0000000102d236ec cxxbridge1$string$len + 493516
+6   chromedriver                        0x0000000102c9019c chromedriver + 98716
+7   chromedriver                        0x000000010314388c cxxbridge1$str$ptr + 2496880
+8   chromedriver                        0x0000000103146ab8 cxxbridge1$str$ptr + 2509724
+9   chromedriver                        0x0000000103124510 cxxbridge1$str$ptr + 2369012
+10  chromedriver                        0x0000000103147360 cxxbridge1$str$ptr + 2511940
+11  chromedriver                        0x0000000103115610 cxxbridge1$str$ptr + 2307828
+12  chromedriver                        0x0000000102c8e434 chromedriver + 91188
+13  dyld                                0x0000000183f510e0 start + 2360
+
+2025-08-20 11:46:26.203 | INFO     | html_code_analyzer:analyze_html_code:440 - Starting analysis for URL: https://mp.weixin.qq.com/s/H-0WoSdhMCIR5izZyTsKlg
+2025-08-20 11:46:26.631 | INFO     | html_code_analyzer:fetch_html_source:81 - Detected dynamic content, using Selenium
+2025-08-20 11:46:26.632 | ERROR    | html_code_analyzer:_fetch_with_selenium:108 - Failed to fetch with Selenium: Message: invalid session id; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#invalidsessionidexception
+Stacktrace:
+0   chromedriver                        0x0000000103180c20 cxxbridge1$str$ptr + 2747652
+1   chromedriver                        0x0000000103178b20 cxxbridge1$str$ptr + 2714628
+2   chromedriver                        0x0000000102cc0f3c cxxbridge1$string$len + 90140
+3   chromedriver                        0x0000000102cfbdf8 cxxbridge1$string$len + 331480
+4   chromedriver                        0x0000000102d243e4 cxxbridge1$string$len + 496836
+5   chromedriver                        0x0000000102d236ec cxxbridge1$string$len + 493516
+6   chromedriver                        0x0000000102c9019c chromedriver + 98716
+7   chromedriver                        0x000000010314388c cxxbridge1$str$ptr + 2496880
+8   chromedriver                        0x0000000103146ab8 cxxbridge1$str$ptr + 2509724
+9   chromedriver                        0x0000000103124510 cxxbridge1$str$ptr + 2369012
+10  chromedriver                        0x0000000103147360 cxxbridge1$str$ptr + 2511940
+11  chromedriver                        0x0000000103115610 cxxbridge1$str$ptr + 2307828
+12  chromedriver                        0x0000000102c8e434 chromedriver + 91188
+13  dyld                                0x0000000183f510e0 start + 2360
+
+2025-08-20 11:46:36.791 | INFO     | html_code_analyzer:analyze_html_code:440 - Starting analysis for URL: view-source:https://mp.weixin.qq.com/s/H-0WoSdhMCIR5izZyTsKlg
+2025-08-20 11:46:36.792 | WARNING  | html_code_analyzer:fetch_html_source:87 - Failed to fetch with requests: No connection adapters were found for 'view-source:https://mp.weixin.qq.com/s/H-0WoSdhMCIR5izZyTsKlg', trying Selenium
+2025-08-20 11:46:36.793 | ERROR    | html_code_analyzer:_fetch_with_selenium:108 - Failed to fetch with Selenium: Message: invalid session id; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#invalidsessionidexception
+Stacktrace:
+0   chromedriver                        0x0000000103180c20 cxxbridge1$str$ptr + 2747652
+1   chromedriver                        0x0000000103178b20 cxxbridge1$str$ptr + 2714628
+2   chromedriver                        0x0000000102cc0f3c cxxbridge1$string$len + 90140
+3   chromedriver                        0x0000000102cfbdf8 cxxbridge1$string$len + 331480
+4   chromedriver                        0x0000000102d243e4 cxxbridge1$string$len + 496836
+5   chromedriver                        0x0000000102d236ec cxxbridge1$string$len + 493516
+6   chromedriver                        0x0000000102c9019c chromedriver + 98716
+7   chromedriver                        0x000000010314388c cxxbridge1$str$ptr + 2496880
+8   chromedriver                        0x0000000103146ab8 cxxbridge1$str$ptr + 2509724
+9   chromedriver                        0x0000000103124510 cxxbridge1$str$ptr + 2369012
+10  chromedriver                        0x0000000103147360 cxxbridge1$str$ptr + 2511940
+11  chromedriver                        0x0000000103115610 cxxbridge1$str$ptr + 2307828
+12  chromedriver                        0x0000000102c8e434 chromedriver + 91188
+13  dyld                                0x0000000183f510e0 start + 2360
+
+2025-08-20 11:46:41.884 | INFO     | html_code_analyzer:analyze_html_code:440 - Starting analysis for URL: https://mp.weixin.qq.com/s/H-0WoSdhMCIR5izZyTsKlg
+2025-08-20 11:46:42.361 | INFO     | html_code_analyzer:fetch_html_source:81 - Detected dynamic content, using Selenium
+2025-08-20 11:46:42.362 | ERROR    | html_code_analyzer:_fetch_with_selenium:108 - Failed to fetch with Selenium: Message: invalid session id; For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#invalidsessionidexception
+Stacktrace:
+0   chromedriver                        0x0000000103180c20 cxxbridge1$str$ptr + 2747652
+1   chromedriver                        0x0000000103178b20 cxxbridge1$str$ptr + 2714628
+2   chromedriver                        0x0000000102cc0f3c cxxbridge1$string$len + 90140
+3   chromedriver                        0x0000000102cfbdf8 cxxbridge1$string$len + 331480
+4   chromedriver                        0x0000000102d243e4 cxxbridge1$string$len + 496836
+5   chromedriver                        0x0000000102d236ec cxxbridge1$string$len + 493516
+6   chromedriver                        0x0000000102c9019c chromedriver + 98716
+7   chromedriver                        0x000000010314388c cxxbridge1$str$ptr + 2496880
+8   chromedriver                        0x0000000103146ab8 cxxbridge1$str$ptr + 2509724
+9   chromedriver                        0x0000000103124510 cxxbridge1$str$ptr + 2369012
+10  chromedriver                        0x0000000103147360 cxxbridge1$str$ptr + 2511940
+11  chromedriver                        0x0000000103115610 cxxbridge1$str$ptr + 2307828
+12  chromedriver                        0x0000000102c8e434 chromedriver + 91188
+13  dyld                                0x0000000183f510e0 start + 2360
+
+2025-08-20 11:48:09.549 | INFO     | html_code_analyzer:analyze_html_code:440 - Starting analysis for URL: https://mp.weixin.qq.com/s/H-0WoSdhMCIR5izZyTsKlg
+2025-08-20 11:48:10.239 | INFO     | html_code_analyzer:fetch_html_source:81 - Detected dynamic content, using Selenium
+2025-08-20 11:48:12.703 | INFO     | html_code_analyzer:_init_selenium_driver:55 - Selenium WebDriver initialized successfully
+2025-08-20 11:49:50.245 | INFO     | html_code_analyzer:analyze_html_code:440 - Starting analysis for URL: https://mp.weixin.qq.com/s/H-0WoSdhMCIR5izZyTsKlg
+2025-08-20 11:49:50.878 | INFO     | html_code_analyzer:fetch_html_source:81 - Detected dynamic content, using Selenium
+2025-08-20 11:49:53.480 | INFO     | html_code_analyzer:_init_selenium_driver:55 - Selenium WebDriver initialized successfully
+2025-08-20 11:50:42.870 | INFO     | html_code_analyzer:analyze_html_code:440 - Starting analysis for URL: https://mp.weixin.qq.com/s/H-0WoSdhMCIR5izZyTsKlg
+2025-08-20 11:50:43.513 | INFO     | html_code_analyzer:fetch_html_source:81 - Detected dynamic content, using Selenium
+2025-08-20 11:50:46.064 | INFO     | html_code_analyzer:_init_selenium_driver:55 - Selenium WebDriver initialized successfully
+2025-08-20 11:52:08.067 | INFO     | html_code_analyzer:fetch_html_source:81 - Detected dynamic content, using Selenium
+2025-08-20 11:52:10.509 | INFO     | html_code_analyzer:_init_selenium_driver:55 - Selenium WebDriver initialized successfully
+2025-08-20 11:53:05.191 | INFO     | html_code_analyzer:analyze_html_code:440 - Starting analysis for URL: https://mp.weixin.qq.com/s/H-0WoSdhMCIR5izZyTsKlg
+2025-08-20 11:53:05.924 | INFO     | html_code_analyzer:fetch_html_source:81 - Detected dynamic content, using Selenium
+2025-08-20 11:53:56.475 | INFO     | html_code_analyzer:analyze_html_code:440 - Starting analysis for URL: https://mp.weixin.qq.com/s/dzntrjq-ECNdPXl_7jAAew
+2025-08-20 11:53:57.147 | INFO     | html_code_analyzer:fetch_html_source:81 - Detected dynamic content, using Selenium
+2025-08-20 12:00:18.591 | INFO     | html_code_analyzer:analyze_html_code:440 - Starting analysis for URL: https://mp.weixin.qq.com/s/H-0WoSdhMCIR5izZyTsKlg
+2025-08-20 12:00:19.391 | INFO     | html_code_analyzer:fetch_html_source:81 - Detected dynamic content, using Selenium
+2025-08-20 12:00:47.201 | INFO     | html_code_analyzer:analyze_html_code:440 - Starting analysis for URL: https://mp.weixin.qq.com/s/dzntrjq-ECNdPXl_7jAAew
+2025-08-20 12:00:47.598 | INFO     | html_code_analyzer:fetch_html_source:81 - Detected dynamic content, using Selenium
+2025-08-20 12:01:11.921 | INFO     | html_code_analyzer:analyze_html_code:440 - Starting analysis for URL: https://mp.weixin.qq.com/s/dzntrjq-ECNdPXl_7jAAew
+2025-08-20 12:01:12.390 | INFO     | html_code_analyzer:fetch_html_source:81 - Detected dynamic content, using Selenium
+2025-08-20 12:02:10.740 | INFO     | html_code_analyzer:analyze_html_code:505 - Starting analysis for URL: https://mp.weixin.qq.com/s/dzntrjq-ECNdPXl_7jAAew
+2025-08-20 12:02:11.444 | INFO     | html_code_analyzer:fetch_html_source:81 - Detected dynamic content, using Selenium
+2025-08-20 12:02:14.029 | INFO     | html_code_analyzer:_init_selenium_driver:55 - Selenium WebDriver initialized successfully
+2025-08-20 12:02:19.134 | ERROR    | html_code_analyzer:analyze_html_code:544 - Analysis failed for https://mp.weixin.qq.com/s/dzntrjq-ECNdPXl_7jAAew: unhashable type: 'dict'
+2025-08-20 12:03:45.875 | INFO     | html_code_analyzer:analyze_html_code:536 - Starting analysis for URL: https://mp.weixin.qq.com/s/dzntrjq-ECNdPXl_7jAAew
+2025-08-20 12:03:46.534 | INFO     | html_code_analyzer:fetch_html_source:81 - Detected dynamic content, using Selenium
+2025-08-20 12:03:49.140 | INFO     | html_code_analyzer:_init_selenium_driver:55 - Selenium WebDriver initialized successfully
+2025-08-20 12:04:17.077 | INFO     | html_code_analyzer:analyze_html_code:536 - Starting analysis for URL: https://mp.weixin.qq.com/s/dzntrjq-ECNdPXl_7jAAew
+2025-08-20 12:04:17.705 | INFO     | html_code_analyzer:fetch_html_source:81 - Detected dynamic content, using Selenium
+2025-08-20 12:04:20.102 | INFO     | html_code_analyzer:_init_selenium_driver:55 - Selenium WebDriver initialized successfully
+2025-08-20 12:06:12.739 | INFO     | html_code_analyzer:analyze_html_code:440 - Starting analysis for URL: https://mp.weixin.qq.com/s/zKzmj98vE3pivEb18OocjQ?scene=1&click_id=439
+2025-08-20 12:06:13.628 | INFO     | html_code_analyzer:fetch_html_source:81 - Detected dynamic content, using Selenium
+2025-08-20 12:06:33.333 | INFO     | html_code_analyzer:analyze_html_code:440 - Starting analysis for URL: https://mp.weixin.qq.com/s/dzntrjq-ECNdPXl_7jAAew
+2025-08-20 12:06:33.767 | INFO     | html_code_analyzer:fetch_html_source:81 - Detected dynamic content, using Selenium
+2025-08-20 12:09:04.999 | INFO     | html_code_analyzer:analyze_html_code:440 - Starting analysis for URL: https://mp.weixin.qq.com/s/dzntrjq-ECNdPXl_7jAAew
+2025-08-20 12:09:05.637 | INFO     | html_code_analyzer:fetch_html_source:81 - Detected dynamic content, using Selenium
+2025-08-20 12:10:08.877 | INFO     | html_code_analyzer:analyze_html_code:536 - Starting analysis for URL: https://mp.weixin.qq.com/s/dzntrjq-ECNdPXl_7jAAew
+2025-08-20 12:10:09.564 | INFO     | html_code_analyzer:fetch_html_source:81 - Detected dynamic content, using Selenium
+2025-08-20 12:10:12.161 | INFO     | html_code_analyzer:_init_selenium_driver:55 - Selenium WebDriver initialized successfully
+2025-08-20 12:10:31.237 | INFO     | html_code_analyzer:analyze_html_code:440 - Starting analysis for URL: https://mp.weixin.qq.com/s/dzntrjq-ECNdPXl_7jAAew
+2025-08-20 12:10:31.963 | INFO     | html_code_analyzer:fetch_html_source:81 - Detected dynamic content, using Selenium
+2025-08-20 12:11:28.817 | INFO     | html_code_analyzer:analyze_html_code:536 - Starting analysis for URL: https://mp.weixin.qq.com/s/dzntrjq-ECNdPXl_7jAAew
+2025-08-20 12:11:29.376 | INFO     | html_code_analyzer:fetch_html_source:81 - Detected dynamic content, using Selenium
+2025-08-20 12:11:32.195 | INFO     | html_code_analyzer:_init_selenium_driver:55 - Selenium WebDriver initialized successfully
+2025-08-20 12:13:42.103 | INFO     | html_code_analyzer:analyze_html_code:536 - Starting analysis for URL: https://mp.weixin.qq.com/s/dzntrjq-ECNdPXl_7jAAew
+2025-08-20 12:13:42.814 | INFO     | html_code_analyzer:fetch_html_source:81 - Detected dynamic content, using Selenium
+2025-08-20 12:13:56.667 | INFO     | html_code_analyzer:analyze_html_code:536 - Starting analysis for URL: https://mp.weixin.qq.com/s/H-0WoSdhMCIR5izZyTsKlg
+2025-08-20 12:13:57.397 | INFO     | html_code_analyzer:fetch_html_source:81 - Detected dynamic content, using Selenium
+2025-08-20 12:14:31.156 | INFO     | html_code_analyzer:analyze_html_code:536 - Starting analysis for URL: https://mp.weixin.qq.com/s/BEBfwzeWzpGAL3aejksimw
+2025-08-20 12:14:31.855 | INFO     | html_code_analyzer:fetch_html_source:81 - Detected dynamic content, using Selenium
+2025-08-20 12:16:52.890 | INFO     | html_code_analyzer:analyze_html_code:536 - Starting analysis for URL: https://mp.weixin.qq.com/s/BEBfwzeWzpGAL3aejksimw
+2025-08-20 12:16:53.557 | INFO     | html_code_analyzer:fetch_html_source:81 - Detected dynamic content, using Selenium
+2025-08-20 12:17:04.475 | INFO     | html_code_analyzer:analyze_html_code:536 - Starting analysis for URL: https://mp.weixin.qq.com/s/BEBfwzeWzpGAL3aejksimw
+2025-08-20 12:17:04.935 | INFO     | html_code_analyzer:fetch_html_source:81 - Detected dynamic content, using Selenium
+2025-08-20 12:18:06.425 | INFO     | html_code_analyzer:analyze_html_code:554 - Starting analysis for URL: https://mp.weixin.qq.com/s/BEBfwzeWzpGAL3aejksimw
+2025-08-20 12:18:07.059 | INFO     | html_code_analyzer:fetch_html_source:81 - Detected dynamic content, using Selenium
+2025-08-20 12:18:09.620 | INFO     | html_code_analyzer:_init_selenium_driver:55 - Selenium WebDriver initialized successfully
+2025-08-20 12:18:30.684 | INFO     | html_code_analyzer:analyze_html_code:554 - Starting analysis for URL: https://mp.weixin.qq.com/s/BEBfwzeWzpGAL3aejksimw
+2025-08-20 12:18:31.151 | INFO     | html_code_analyzer:fetch_html_source:81 - Detected dynamic content, using Selenium
+2025-08-20 12:19:24.228 | INFO     | html_code_analyzer:analyze_html_code:554 - Starting analysis for URL: https://mp.weixin.qq.com/s/dzntrjq-ECNdPXl_7jAAew
+2025-08-20 12:19:24.962 | INFO     | html_code_analyzer:fetch_html_source:81 - Detected dynamic content, using Selenium
+2025-08-20 12:19:41.326 | INFO     | html_code_analyzer:analyze_html_code:554 - Starting analysis for URL: https://mp.weixin.qq.com/s/BEBfwzeWzpGAL3aejksimw
+2025-08-20 12:19:42.027 | INFO     | html_code_analyzer:fetch_html_source:81 - Detected dynamic content, using Selenium
+2025-08-20 12:21:18.374 | INFO     | html_code_analyzer:analyze_html_code:554 - Starting analysis for URL: https://mp.weixin.qq.com/s/BEBfwzeWzpGAL3aejksimw
+2025-08-20 12:21:19.249 | INFO     | html_code_analyzer:fetch_html_source:81 - Detected dynamic content, using Selenium
+2025-08-20 12:21:33.488 | INFO     | html_code_analyzer:analyze_html_code:554 - Starting analysis for URL: https://mp.weixin.qq.com/s/BEBfwzeWzpGAL3aejksimw
+2025-08-20 12:21:34.044 | INFO     | html_code_analyzer:fetch_html_source:81 - Detected dynamic content, using Selenium
+2025-08-20 12:24:03.679 | INFO     | html_code_analyzer:analyze_html_code:534 - Starting analysis for URL: https://mp.weixin.qq.com/s/BEBfwzeWzpGAL3aejksimw
+2025-08-20 12:24:04.288 | INFO     | html_code_analyzer:fetch_html_source:81 - Detected dynamic content, using Selenium
+2025-08-20 12:24:07.027 | INFO     | html_code_analyzer:_init_selenium_driver:55 - Selenium WebDriver initialized successfully
+2025-08-20 12:24:35.278 | INFO     | html_code_analyzer:analyze_html_code:534 - Starting analysis for URL: https://mp.weixin.qq.com/s/8CF_6pMGi8XS3uI73Xhq_g
+2025-08-20 12:24:35.915 | INFO     | html_code_analyzer:fetch_html_source:81 - Detected dynamic content, using Selenium
+2025-08-20 12:25:03.830 | INFO     | html_code_analyzer:analyze_html_code:534 - Starting analysis for URL: https://mp.weixin.qq.com/s/Ic28uyUB18NwxUb2QN-86g
+2025-08-20 12:25:04.259 | INFO     | html_code_analyzer:fetch_html_source:81 - Detected dynamic content, using Selenium
+2025-08-20 12:25:35.058 | INFO     | html_code_analyzer:analyze_html_code:534 - Starting analysis for URL: https://mp.weixin.qq.com/s/lkH9tCtBykTbHgD8eRETWA
+2025-08-20 12:25:35.661 | INFO     | html_code_analyzer:fetch_html_source:81 - Detected dynamic content, using Selenium
+2025-08-20 12:38:01.280 | INFO     | html_code_analyzer:analyze_html_code:534 - Starting analysis for URL: https://mp.weixin.qq.com/s/Ic28uyUB18NwxUb2QN-86g
+2025-08-20 12:38:01.926 | INFO     | html_code_analyzer:fetch_html_source:81 - Detected dynamic content, using Selenium
+2025-08-20 12:42:48.273 | INFO     | html_code_analyzer:analyze_html_code:534 - Starting analysis for URL: https://mp.weixin.qq.com/s/H-0WoSdhMCIR5izZyTsKlg
+2025-08-20 12:42:48.955 | INFO     | html_code_analyzer:fetch_html_source:81 - Detected dynamic content, using Selenium
+2025-08-20 12:48:21.174 | INFO     | html_code_analyzer:analyze_html_code:534 - Starting analysis for URL: https://mp.weixin.qq.com/s/Ic28uyUB18NwxUb2QN-86g
+2025-08-20 12:48:21.897 | INFO     | html_code_analyzer:fetch_html_source:81 - Detected dynamic content, using Selenium
