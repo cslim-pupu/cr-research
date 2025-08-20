@@ -95,9 +95,14 @@ class HTMLCodeAnalyzer:
             response = self.session.get(url, timeout=30)
             response.raise_for_status()
             
-            # 检查是否需要使用Selenium（对于动态内容）
-            if self.validate_wechat_url(url) or 'javascript' in response.text.lower():
-                logger.info("Detected dynamic content, using Selenium")
+            # 对于微信文章，优先使用requests，因为它们的内容是服务端渲染的
+            if self.validate_wechat_url(url):
+                logger.info("WeChat article detected, using requests (server-side rendered)")
+                return response.text
+            
+            # 对于其他需要JavaScript的页面，才使用Selenium
+            if 'javascript' in response.text.lower() and len(response.text) < 1000:
+                logger.info("Detected minimal content, trying Selenium")
                 return self._fetch_with_selenium(url)
             
             return response.text
@@ -473,22 +478,18 @@ class HTMLCodeAnalyzer:
                 publish_time = element.get_text().strip()
                 break
         
-        # 从脚本中提取发布时间
+        # 从脚本中提取发布时间（改进的正则表达式）
         if publish_time == "未找到发布时间":
-            scripts = soup.find_all('script')
-            for script in scripts:
-                if script.string:
-                    # 查找时间戳
-                    time_match = re.search(r'publish_time["\']?\s*[:=]\s*["\']?(\d{10})', script.string)
-                    if time_match:
-                        timestamp = int(time_match.group(1))
-                        publish_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(timestamp))
-                        break
-                    # 查找日期格式
-                    date_match = re.search(r'(\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2})', script.string)
-                    if date_match:
-                        publish_time = date_match.group(1)
-                        break
+            # 直接在HTML文本中搜索时间戳
+            time_match = re.search(r'var publish_time = (\d{10})', html_content)
+            if time_match:
+                timestamp = int(time_match.group(1))
+                publish_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(timestamp))
+            else:
+                # 尝试其他时间格式
+                date_match = re.search(r'(\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2})', html_content)
+                if date_match:
+                    publish_time = date_match.group(1)
         
         # 提取公众号名称
         account_name = "未找到公众号名称"
@@ -504,33 +505,30 @@ class HTMLCodeAnalyzer:
                 account_name = element.get_text().strip()
                 break
         
-        # 从脚本中提取公众号名称
-        if account_name == "未找到公众号名称":
-            scripts = soup.find_all('script')
-            for script in scripts:
-                if script.string:
-                    # 查找公众号名称
-                    if 'nickname' in script.string:
-                        # 简化的字符串匹配
-                        script_text = script.string
-                        if '"nickname"' in script_text or "'nickname'" in script_text:
-                            # 尝试提取引号中的内容
-                            import json
-                            try:
-                                # 尝试解析JSON格式
-                                if 'nickname' in script_text:
-                                    start = script_text.find('nickname')
-                                    if start != -1:
-                                        # 查找后续的值
-                                        remaining = script_text[start:]
-                                        if '"' in remaining:
-                                            parts = remaining.split('"')
-                                            if len(parts) >= 3:
-                                                account_name = parts[2].strip()
-                                                if account_name:
-                                                    break
-                            except:
-                                pass
+        # 从脚本中提取标题和公众号名称（使用正则表达式）
+        if title == "未找到标题" or account_name == "未找到公众号名称":
+            # 直接在HTML文本中搜索JavaScript变量
+            # 提取标题
+            if title == "未找到标题":
+                title_match = re.search(r'var msg_title = ([^;]+);', html_content)
+                if title_match:
+                    title_value = title_match.group(1).strip()
+                    # 处理格式如 '标题'.html(false)
+                    if title_value.startswith("'") and "'.html(false)" in title_value:
+                        title = title_value.split("'")[1]
+                    elif title_value.startswith('"') and '".html(false)' in title_value:
+                        title = title_value.split('"')[1]
+            
+            # 提取公众号名称
+            if account_name == "未找到公众号名称":
+                nickname_match = re.search(r'var nickname = ([^;]+);', html_content)
+                if nickname_match:
+                    nickname_value = nickname_match.group(1).strip()
+                    # 处理格式如 htmlDecode("公众号名称")
+                    if 'htmlDecode(' in nickname_value:
+                        decode_match = re.search(r'htmlDecode\(["\']([^"\']*)["\'\])', nickname_value)
+                        if decode_match:
+                            account_name = decode_match.group(1)
         
         # 提取原始链接（通常就是当前URL）
         original_url = url
