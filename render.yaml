@@ -1,9 +1,8 @@
 services:
   - type: web
     name: html-copyright-analyzer
-    env: python
-    buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn --bind 0.0.0.0:$PORT web_app:app
+    env: docker
+    dockerfilePath: ./Dockerfile
     plan: free
     envVars:
       - key: PYTHON_VERSION

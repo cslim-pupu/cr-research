@@ -59,12 +59,13 @@ class HTMLCodeAnalyzer:
                 
                 # 检查是否在云环境中运行
                 import os
-                if os.environ.get('RENDER') or os.environ.get('DYNO'):
-                    # 云环境配置
-                    chrome_options.binary_location = '/opt/google/chrome/chrome'
+                if os.environ.get('RENDER') or os.environ.get('DYNO') or os.path.exists('/usr/bin/google-chrome-stable'):
+                    # Docker/云环境配置
+                    chrome_options.binary_location = '/usr/bin/google-chrome-stable'
                     chrome_options.add_argument('--single-process')
                     chrome_options.add_argument('--disable-web-security')
                     chrome_options.add_argument('--allow-running-insecure-content')
+                    chrome_options.add_argument('--disable-features=VizDisplayCompositor')
                 
                 self.driver = webdriver.Chrome(
                     service=webdriver.chrome.service.Service(ChromeDriverManager().install()),
