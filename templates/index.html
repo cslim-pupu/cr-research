@@ -213,6 +213,40 @@
             margin-left: 10px;
         }
         
+        .wechat-article-section {
+            background: linear-gradient(135deg, #1aad1920 0%, #00d4aa20 100%);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #1aad19;
+        }
+        
+        .wechat-article-section h4 {
+            color: #1aad19;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+        
+        .wechat-article-section .result-item {
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid #e8f5e8;
+        }
+        
+        .wechat-article-section .result-item strong {
+            color: #1aad19;
+        }
+        
+        .wechat-article-section a {
+            color: #1aad19;
+            text-decoration: none;
+            word-break: break-all;
+        }
+        
+        .wechat-article-section a:hover {
+            text-decoration: underline;
+        }
+        
         @media (max-width: 600px) {
             .container {
                 margin: 10px;
@@ -372,6 +406,31 @@
                 </div>
             `;
             
+            // 微信文章信息 - 显示在最前面
+            if (data.wechat_article_info && Object.keys(data.wechat_article_info).length > 0) {
+                const wechatInfo = data.wechat_article_info;
+                html += '<div class="wechat-article-section">';
+                html += '<h4>📱 微信文章信息</h4>';
+                
+                if (wechatInfo.title && wechatInfo.title !== '未找到标题') {
+                    html += `<div class="result-item"><strong>文章标题：</strong>${wechatInfo.title}</div>`;
+                }
+                
+                if (wechatInfo.publish_time && wechatInfo.publish_time !== '未找到发布时间') {
+                    html += `<div class="result-item"><strong>发布时间：</strong>${wechatInfo.publish_time}</div>`;
+                }
+                
+                if (wechatInfo.account_name && wechatInfo.account_name !== '未找到公众号名称') {
+                    html += `<div class="result-item"><strong>公众号名称：</strong>${wechatInfo.account_name}</div>`;
+                }
+                
+                if (wechatInfo.original_url) {
+                    html += `<div class="result-item"><strong>原文链接：</strong><a href="${wechatInfo.original_url}" target="_blank">${wechatInfo.original_url}</a></div>`;
+                }
+                
+                html += '</div>';
+            }
+            
             // 开发信息
             if (data.development_info) {
                 const devInfo = data.development_info;
@@ -415,23 +474,35 @@
             if (data.html_analysis) {
                 const analysis = data.html_analysis;
                 
-                // HTML注释
-                if (analysis.html_comments && (analysis.html_comments.copyright_statements?.length > 0 || analysis.html_comments.author_mentions?.length > 0)) {
+                // HTML注释分析已移除
+                
+                // Meta标签
+                if (analysis.meta_tags && analysis.meta_tags.meta_tags?.length > 0) {
                     html += '<div class="copyright-section">';
-                    html += '<h4>💬 HTML注释分析</h4>';
+                    html += '<h4>🏷️ Meta标签信息</h4>';
                     
-                    if (analysis.html_comments.copyright_statements?.length > 0) {
-                        html += '<p><strong>版权声明：</strong></p><ul class="copyright-list">';
-                        analysis.html_comments.copyright_statements.forEach(statement => {
-                            html += `<li>${statement}</li>`;
+                    const authorTags = analysis.meta_tags.meta_tags.filter(tag => 
+                        tag.name === 'author' || tag.property === 'author' || 
+                        tag.name === 'creator' || tag.property === 'creator'
+                    );
+                    
+                    const copyrightTags = analysis.meta_tags.meta_tags.filter(tag => 
+                        tag.name === 'copyright' || tag.property === 'copyright' ||
+                        tag.name === 'rights' || tag.property === 'rights'
+                    );
+                    
+                    if (authorTags.length > 0) {
+                        html += '<p><strong>Meta作者：</strong></p><ul class="copyright-list">';
+                        authorTags.forEach(tag => {
+                            html += `<li>${tag.content}</li>`;
                         });
                         html += '</ul>';
                     }
                     
-                    if (analysis.html_comments.author_mentions?.length > 0) {
-                        html += '<p><strong>作者提及：</strong></p><ul class="copyright-list">';
-                        analysis.html_comments.author_mentions.forEach(author => {
-                            html += `<li>${author}</li>`;
+                    if (copyrightTags.length > 0) {
+                        html += '<p><strong>Meta版权：</strong></p><ul class="copyright-list">';
+                        copyrightTags.forEach(tag => {
+                            html += `<li>${tag.content}</li>`;
                         });
                         html += '</ul>';
                     }
@@ -439,27 +510,40 @@
                     html += '</div>';
                 }
                 
-                // Meta标签
-                if (analysis.meta_tags && (analysis.meta_tags.meta_author?.length > 0 || analysis.meta_tags.meta_copyright?.length > 0)) {
+                // 脚本标签信息
+                if (analysis.script_tags && analysis.script_tags.script_libraries?.length > 0) {
                     html += '<div class="copyright-section">';
-                    html += '<h4>🏷️ Meta标签信息</h4>';
-                    
-                    if (analysis.meta_tags.meta_author?.length > 0) {
-                        html += '<p><strong>Meta作者：</strong></p><ul class="copyright-list">';
-                        analysis.meta_tags.meta_author.forEach(author => {
-                            html += `<li>${author}</li>`;
-                        });
-                        html += '</ul>';
-                    }
-                    
-                    if (analysis.meta_tags.meta_copyright?.length > 0) {
-                        html += '<p><strong>Meta版权：</strong></p><ul class="copyright-list">';
-                        analysis.meta_tags.meta_copyright.forEach(copyright => {
-                            html += `<li>${copyright}</li>`;
-                        });
-                        html += '</ul>';
-                    }
-                    
+                    html += '<h4>📚 检测到的JavaScript库</h4>';
+                    html += '<p><strong>使用的库：</strong></p><ul class="copyright-list">';
+                    analysis.script_tags.script_libraries.forEach(lib => {
+                        html += `<li>${lib}</li>`;
+                    });
+                    html += '</ul>';
+                    html += '</div>';
+                }
+            }
+            
+            // 微信文章信息已移至前面显示
+            
+            // 自定义属性信息
+            if (data.html_analysis && data.html_analysis.custom_attributes) {
+                const customAttrs = data.html_analysis.custom_attributes;
+                
+                if (customAttrs.copyright_attributes && customAttrs.copyright_attributes.length > 0) {
+                    html += '<div class="copyright-section">';
+                    html += '<h4>©️ 版权属性信息</h4>';
+                    customAttrs.copyright_attributes.forEach(attr => {
+                        html += `<div class="result-item"><strong>版权信息：</strong>${attr.copyright}</div>`;
+                    });
+                    html += '</div>';
+                }
+                
+                if (customAttrs.labels_attributes && customAttrs.labels_attributes.length > 0) {
+                    html += '<div class="copyright-section">';
+                    html += '<h4>🏷️ 标签属性信息</h4>';
+                    customAttrs.labels_attributes.forEach(attr => {
+                        html += `<div class="result-item"><strong>标签信息：</strong>${attr.labels}</div>`;
+                    });
                     html += '</div>';
                 }
             }

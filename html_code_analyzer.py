@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-HTML源代码版权分析器
-功能：分析微信公众号页面的HTML源代码，查找版权信息和代码作者
+HTML代码分析器
+用于分析网页的HTML源代码，提取开发信息、版权信息等
 """
 
 import requests
@@ -22,7 +22,7 @@ from typing import Dict, List, Optional, Tuple
 import base64
 
 class HTMLCodeAnalyzer:
-    """HTML源代码版权分析器"""
+    """HTML代码分析器类"""
     
     def __init__(self):
         self.session = requests.Session()
@@ -33,507 +33,556 @@ class HTMLCodeAnalyzer:
         self._setup_logging()
     
     def _setup_logging(self):
-        """设置日志记录"""
-        logger.add("html_code_analyzer.log", rotation="10 MB", level="INFO")
+        """设置日志"""
+        logger.add("html_analyzer.log", rotation="10 MB", level="INFO")
     
     def _init_selenium_driver(self):
         """初始化Selenium WebDriver"""
         if self.driver is None:
-            chrome_options = Options()
-            chrome_options.add_argument('--headless')
-            chrome_options.add_argument('--no-sandbox')
-            chrome_options.add_argument('--disable-dev-shm-usage')
-            chrome_options.add_argument('--disable-gpu')
-            chrome_options.add_argument('--window-size=1920,1080')
-            
             try:
+                chrome_options = Options()
+                chrome_options.add_argument('--headless')
+                chrome_options.add_argument('--no-sandbox')
+                chrome_options.add_argument('--disable-dev-shm-usage')
+                chrome_options.add_argument('--disable-gpu')
+                chrome_options.add_argument('--window-size=1920,1080')
+                chrome_options.add_argument('--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36')
+                
                 self.driver = webdriver.Chrome(
                     service=webdriver.chrome.service.Service(ChromeDriverManager().install()),
                     options=chrome_options
                 )
-                logger.info("Selenium WebDriver 初始化成功")
+                logger.info("Selenium WebDriver initialized successfully")
             except Exception as e:
-                logger.error(f"Selenium WebDriver 初始化失败: {e}")
-                raise
+                logger.error(f"Failed to initialize Selenium WebDriver: {e}")
+                self.driver = None
     
     def validate_wechat_url(self, url: str) -> bool:
-        """验证是否为有效的微信公众号文章链接"""
+        """验证是否为微信公众号文章URL"""
         wechat_patterns = [
-            r'https://mp\.weixin\.qq\.com/s/',
-            r'https://mp\.weixin\.qq\.com/s\?',
+            r'mp\.weixin\.qq\.com',
+            r'weixin\.qq\.com'
         ]
         
         for pattern in wechat_patterns:
-            if re.match(pattern, url):
+            if re.search(pattern, url):
                 return True
         return False
     
     def fetch_html_source(self, url: str) -> Optional[str]:
-        """获取页面的完整HTML源代码"""
-        if not self.validate_wechat_url(url):
-            logger.error(f"无效的微信公众号文章链接: {url}")
-            return None
-        
+        """获取网页HTML源代码"""
         try:
-            # 首先尝试使用requests获取
+            # 首先尝试使用requests
             response = self.session.get(url, timeout=30)
             response.raise_for_status()
             
-            if '请在微信客户端打开链接' in response.text or '该链接已过期' in response.text:
-                logger.warning("链接需要在微信客户端打开或已过期，尝试使用Selenium")
+            # 检查是否需要使用Selenium（对于动态内容）
+            if self.validate_wechat_url(url) or 'javascript' in response.text.lower():
+                logger.info("Detected dynamic content, using Selenium")
                 return self._fetch_with_selenium(url)
             
             return response.text
             
-        except requests.RequestException as e:
-            logger.error(f"请求失败: {e}")
+        except Exception as e:
+            logger.warning(f"Failed to fetch with requests: {e}, trying Selenium")
             return self._fetch_with_selenium(url)
     
     def _fetch_with_selenium(self, url: str) -> Optional[str]:
-        """使用Selenium获取HTML源代码"""
+        """使用Selenium获取网页内容"""
         try:
             self._init_selenium_driver()
-            self.driver.get(url)
+            if self.driver is None:
+                return None
             
-            # 等待页面加载
+            self.driver.get(url)
+            WebDriverWait(self.driver, 10).until(
+                EC.presence_of_element_located((By.TAG_NAME, "body"))
+            )
+            
+            # 等待页面完全加载
             time.sleep(3)
             
-            html_content = self.driver.page_source
-            return html_content
+            return self.driver.page_source
             
         except Exception as e:
-            logger.error(f"Selenium获取内容失败: {e}")
+            logger.error(f"Failed to fetch with Selenium: {e}")
             return None
     
     def analyze_html_comments(self, html_content: str) -> Dict:
-        """分析HTML注释中的版权信息"""
+        """分析HTML注释"""
         soup = BeautifulSoup(html_content, 'lxml')
         comments = soup.find_all(string=lambda text: isinstance(text, Comment))
         
-        copyright_info = {
-            'html_comments': [],
-            'copyright_statements': [],
-            'author_mentions': [],
-            'creation_info': [],
-            'license_info': [],
-            'html_attributes': []  # 新增：HTML属性中的版权信息
+        comment_analysis = {
+            'total_comments': len(comments),
+            'comments': []
         }
-        
-        # 版权相关关键词模式
-        copyright_patterns = [
-            r'(?i)copyright\s*[©]?\s*([^\n]+)',
-            r'(?i)©\s*([^\n]+)',
-            r'(?i)author[s]?[：:]\s*([^\n]+)',
-            r'(?i)created\s*by[：:]\s*([^\n]+)',
-            r'(?i)developed\s*by[：:]\s*([^\n]+)',
-            r'(?i)designed\s*by[：:]\s*([^\n]+)',
-            r'(?i)coded\s*by[：:]\s*([^\n]+)',
-            r'(?i)built\s*by[：:]\s*([^\n]+)',
-            r'版权所有[：:]\s*([^\n]+)',
-            r'作者[：:]\s*([^\n]+)',
-            r'开发者[：:]\s*([^\n]+)',
-            r'制作[：:]\s*([^\n]+)',
-            # 新增：匹配任何包含版权相关词汇的内容
-            r'([^"\s]*(?:copyright|author|creator|developer|designer|coder|builder|owner|holder)[^"\s]*)',
-            r'([^"\s]*(?:版权|作者|开发|制作|设计|创建)[^"\s]*)',
-            # 匹配简单的名称模式（如 ifsvg, yifu 等）
-            r'([a-zA-Z][a-zA-Z0-9_-]{2,20})'
-        ]
         
         for comment in comments:
             comment_text = comment.strip()
             if comment_text:
-                copyright_info['html_comments'].append(comment_text)
-                
-                # 检查是否包含版权信息
-                for pattern in copyright_patterns:
-                    matches = re.findall(pattern, comment_text)
-                    if matches:
-                        if 'copyright' in pattern.lower() or '©' in pattern:
-                            copyright_info['copyright_statements'].extend(matches)
-                        elif 'author' in pattern.lower() or '作者' in pattern:
-                            copyright_info['author_mentions'].extend(matches)
-                        elif any(word in pattern.lower() for word in ['created', 'developed', 'designed', 'coded', 'built', '开发', '制作']):
-                            copyright_info['creation_info'].extend(matches)
+                comment_analysis['comments'].append({
+                    'content': comment_text,
+                    'length': len(comment_text)
+                })
         
-        # 分析HTML标签属性中的版权信息
-        all_tags = soup.find_all()
-        for tag in all_tags:
-            for attr_name, attr_value in tag.attrs.items():
-                if isinstance(attr_value, str):
-                    # 特殊处理版权相关属性
-                    if any(keyword in attr_name.lower() for keyword in ['copyright', 'author', 'creator', 'owner', 'cpy', 'powered-by', 'powered_by']):
-                        copyright_info['html_attributes'].append({
-                            'tag': tag.name,
-                            'attribute': attr_name,
-                            'value': attr_value,
-                            'matches': [attr_value]
-                        })
-                        copyright_info['copyright_statements'].append(f"{attr_name}: {attr_value}")
-                    
-                    # 特殊处理name属性
-                    if attr_name.lower() == 'name' and len(attr_value) > 2 and len(attr_value) < 50:
-                        copyright_info['html_attributes'].append({
-                            'tag': tag.name,
-                            'attribute': attr_name,
-                            'value': attr_value,
-                            'matches': [attr_value]
-                        })
-                        copyright_info['author_mentions'].append(f"name: {attr_value}")
-                    
-                    # 检查属性值中是否包含版权信息
-                    for pattern in copyright_patterns:
-                        matches = re.findall(pattern, attr_value)
-                        if matches:
-                            copyright_info['html_attributes'].append({
-                                'tag': tag.name,
-                                'attribute': attr_name,
-                                'value': attr_value,
-                                'matches': matches
-                            })
-                            
-                            # 分类存储
-                            if 'copyright' in pattern.lower() or '©' in pattern:
-                                copyright_info['copyright_statements'].extend(matches)
-                            elif 'author' in pattern.lower() or '作者' in pattern:
-                                copyright_info['author_mentions'].extend(matches)
-                            elif any(word in pattern.lower() for word in ['created', 'developed', 'designed', 'coded', 'built', '开发', '制作']):
-                                copyright_info['creation_info'].extend(matches)
-        
-        return copyright_info
+        return {
+            'html_comments': comment_analysis
+        }
     
     def analyze_meta_tags(self, html_content: str) -> Dict:
-        """分析HTML meta标签中的版权信息"""
+        """分析Meta标签"""
         soup = BeautifulSoup(html_content, 'lxml')
-        meta_info = {
-            'meta_copyright': [],
-            'meta_author': [],
-            'meta_generator': [],
-            'meta_description': [],
-            'meta_keywords': []
-        }
-        
-        # 查找相关的meta标签
         meta_tags = soup.find_all('meta')
         
-        for meta in meta_tags:
-            name = meta.get('name', '').lower()
-            property_attr = meta.get('property', '').lower()
-            content = meta.get('content', '')
-            
-            if not content:
-                continue
-            
-            # 版权相关的meta标签
-            if name in ['copyright', 'rights', 'author', 'creator', 'generator', 'description', 'keywords']:
-                if name == 'copyright' or name == 'rights':
-                    meta_info['meta_copyright'].append(content)
-                elif name == 'author' or name == 'creator':
-                    meta_info['meta_author'].append(content)
-                elif name == 'generator':
-                    meta_info['meta_generator'].append(content)
-                elif name == 'description':
-                    meta_info['meta_description'].append(content)
-                elif name == 'keywords':
-                    meta_info['meta_keywords'].append(content)
-            
-            # Open Graph 标签
-            if property_attr.startswith('og:'):
-                if 'author' in property_attr or 'creator' in property_attr:
-                    meta_info['meta_author'].append(content)
+        meta_analysis = {
+            'total_meta_tags': len(meta_tags),
+            'meta_tags': []
+        }
         
-        return meta_info
+        for meta in meta_tags:
+            meta_info = {}
+            
+            # 获取所有属性
+            for attr, value in meta.attrs.items():
+                if isinstance(value, list):
+                    meta_info[attr] = ' '.join(value)
+                else:
+                    meta_info[attr] = value
+            
+            if meta_info:  # 只添加非空的meta标签
+                meta_analysis['meta_tags'].append(meta_info)
+        
+        return {
+            'meta_tags': meta_analysis
+        }
     
     def analyze_script_tags(self, html_content: str) -> Dict:
-        """分析JavaScript代码中的版权信息"""
+        """分析Script标签"""
         soup = BeautifulSoup(html_content, 'lxml')
-        script_info = {
-            'script_comments': [],
-            'script_copyright': [],
-            'script_author': [],
-            'library_info': []
+        script_tags = soup.find_all('script')
+        
+        script_analysis = {
+            'total_script_tags': len(script_tags),
+            'external_scripts': [],
+            'inline_scripts_count': 0,
+            'script_libraries': []
         }
         
-        scripts = soup.find_all('script')
+        for script in script_tags:
+            if script.get('src'):
+                src = script.get('src')
+                script_analysis['external_scripts'].append(src)
+                
+                # 识别常见的JavaScript库
+                libraries = {
+                    'jquery': r'jquery',
+                    'bootstrap': r'bootstrap',
+                    'vue': r'vue',
+                    'react': r'react',
+                    'angular': r'angular',
+                    'lodash': r'lodash',
+                    'moment': r'moment',
+                    'axios': r'axios'
+                }
+                
+                for lib_name, pattern in libraries.items():
+                    if re.search(pattern, src.lower()):
+                        if lib_name not in script_analysis['script_libraries']:
+                            script_analysis['script_libraries'].append(lib_name)
+            else:
+                script_analysis['inline_scripts_count'] += 1
         
-        for script in scripts:
-            if script.string:
-                script_content = script.string
-                
-                # 查找JavaScript注释中的版权信息
-                js_comment_patterns = [
-                    r'/\*[\s\S]*?\*/',  # 多行注释
-                    r'//.*$'  # 单行注释
-                ]
-                
-                for pattern in js_comment_patterns:
-                    comments = re.findall(pattern, script_content, re.MULTILINE)
-                    for comment in comments:
-                        comment_clean = re.sub(r'[/*]', '', comment).strip()
-                        if comment_clean:
-                            script_info['script_comments'].append(comment_clean)
-                            
-                            # 检查版权信息
-                            if re.search(r'(?i)copyright|©|author|created|developed', comment_clean):
-                                if re.search(r'(?i)copyright|©', comment_clean):
-                                    script_info['script_copyright'].append(comment_clean)
-                                if re.search(r'(?i)author|created|developed', comment_clean):
-                                    script_info['script_author'].append(comment_clean)
-                
-                # 查找库信息
-                library_patterns = [
-                    r'(?i)jquery[\s-]?v?([\d.]+)',
-                    r'(?i)bootstrap[\s-]?v?([\d.]+)',
-                    r'(?i)vue[\s-]?v?([\d.]+)',
-                    r'(?i)react[\s-]?v?([\d.]+)',
-                    r'(?i)angular[\s-]?v?([\d.]+)'
-                ]
-                
-                for pattern in library_patterns:
-                    matches = re.findall(pattern, script_content)
-                    if matches:
-                        library_name = pattern.split('?')[1].split('[')[0]
-                        for version in matches:
-                            script_info['library_info'].append(f"{library_name} v{version}")
-        
-        return script_info
+        return {
+            'script_tags': script_analysis
+        }
     
     def analyze_css_content(self, html_content: str) -> Dict:
-        """分析CSS代码中的版权信息"""
+        """分析CSS内容"""
         soup = BeautifulSoup(html_content, 'lxml')
-        css_info = {
-            'css_comments': [],
-            'css_copyright': [],
-            'css_author': [],
-            'framework_info': []
-        }
+        
+        # 分析外部CSS文件
+        link_tags = soup.find_all('link', {'rel': 'stylesheet'})
+        external_css = [link.get('href') for link in link_tags if link.get('href')]
         
         # 分析内联CSS
         style_tags = soup.find_all('style')
+        inline_css_count = len(style_tags)
         
-        for style in style_tags:
-            if style.string:
-                css_content = style.string
-                
-                # 查找CSS注释
-                css_comments = re.findall(r'/\*[\s\S]*?\*/', css_content)
-                
-                for comment in css_comments:
-                    comment_clean = re.sub(r'[/*]', '', comment).strip()
-                    if comment_clean:
-                        css_info['css_comments'].append(comment_clean)
-                        
-                        # 检查版权信息
-                        if re.search(r'(?i)copyright|©|author|created|developed', comment_clean):
-                            if re.search(r'(?i)copyright|©', comment_clean):
-                                css_info['css_copyright'].append(comment_clean)
-                            if re.search(r'(?i)author|created|developed', comment_clean):
-                                css_info['css_author'].append(comment_clean)
+        css_analysis = {
+            'external_css_count': len(external_css),
+            'external_css_files': external_css,
+            'inline_css_count': inline_css_count,
+            'css_frameworks': []
+        }
         
-        # 分析外部CSS链接
-        link_tags = soup.find_all('link', rel='stylesheet')
-        for link in link_tags:
-            href = link.get('href', '')
-            if href:
-                # 检查是否是知名框架
-                if 'bootstrap' in href.lower():
-                    css_info['framework_info'].append('Bootstrap CSS Framework')
-                elif 'fontawesome' in href.lower():
-                    css_info['framework_info'].append('Font Awesome Icons')
-                elif 'jquery' in href.lower():
-                    css_info['framework_info'].append('jQuery UI CSS')
+        # 识别CSS框架
+        all_css_content = ' '.join([link.get('href', '') for link in link_tags])
+        frameworks = {
+            'bootstrap': r'bootstrap',
+            'foundation': r'foundation',
+            'bulma': r'bulma',
+            'tailwind': r'tailwind',
+            'materialize': r'materialize'
+        }
         
-        return css_info
+        for framework, pattern in frameworks.items():
+            if re.search(pattern, all_css_content.lower()):
+                css_analysis['css_frameworks'].append(framework)
+        
+        return {
+            'css_analysis': css_analysis
+        }
     
     def extract_embedded_data(self, html_content: str) -> Dict:
-        """提取嵌入的数据和配置信息"""
+        """提取嵌入的数据"""
         soup = BeautifulSoup(html_content, 'lxml')
-        embedded_info = {
-            'json_data': [],
-            'config_data': [],
-            'api_endpoints': [],
-            'tracking_codes': []
+        
+        embedded_data = {
+            'json_ld': [],
+            'microdata': [],
+            'data_attributes': []
         }
         
-        scripts = soup.find_all('script')
+        # 提取JSON-LD数据
+        json_ld_scripts = soup.find_all('script', {'type': 'application/ld+json'})
+        for script in json_ld_scripts:
+            try:
+                if script.string:
+                    json_data = json.loads(script.string)
+                    embedded_data['json_ld'].append(json_data)
+            except json.JSONDecodeError:
+                continue
         
-        for script in scripts:
-            if script.string:
-                script_content = script.string
-                
-                # 查找JSON数据
-                try:
-                    # 查找可能的JSON配置
-                    json_patterns = [
-                        r'var\s+\w+\s*=\s*(\{[^}]+\})',
-                        r'window\.[\w.]+\s*=\s*(\{[^}]+\})',
-                        r'config\s*[=:]\s*(\{[^}]+\})'
-                    ]
-                    
-                    for pattern in json_patterns:
-                        matches = re.findall(pattern, script_content)
-                        for match in matches:
-                            try:
-                                # 尝试解析JSON
-                                json_obj = json.loads(match)
-                                embedded_info['json_data'].append(match)
-                            except:
-                                # 如果不是有效JSON，仍然记录
-                                embedded_info['config_data'].append(match)
-                
-                except Exception as e:
-                    logger.debug(f"JSON解析错误: {e}")
-                
-                # 查找API端点
-                api_patterns = [
-                    r'(?i)api[/\w]*',
-                    r'https?://[\w.-]+/api[/\w]*',
-                    r'/[\w/]*api[/\w]*'
-                ]
-                
-                for pattern in api_patterns:
-                    matches = re.findall(pattern, script_content)
-                    embedded_info['api_endpoints'].extend(matches)
-                
-                # 查找跟踪代码
-                tracking_patterns = [
-                    r'(?i)google-analytics',
-                    r'(?i)gtag\(',
-                    r'(?i)_gaq',
-                    r'(?i)baidu.*tongji',
-                    r'(?i)cnzz'
-                ]
-                
-                for pattern in tracking_patterns:
-                    if re.search(pattern, script_content):
-                        embedded_info['tracking_codes'].append(pattern)
+        # 提取微数据
+        microdata_elements = soup.find_all(attrs={'itemscope': True})
+        for element in microdata_elements:
+            microdata_info = {
+                'itemtype': element.get('itemtype'),
+                'itemscope': element.get('itemscope'),
+                'tag': element.name
+            }
+            embedded_data['microdata'].append(microdata_info)
         
-        return embedded_info
+        # 提取data-*属性
+        all_elements = soup.find_all()
+        data_attrs = set()
+        for element in all_elements:
+            for attr in element.attrs:
+                if attr.startswith('data-'):
+                    data_attrs.add(attr)
+        
+        embedded_data['data_attributes'] = list(data_attrs)
+        
+        return {
+            'embedded_data': embedded_data
+        }
+    
+    def analyze_custom_attributes(self, html_content: str) -> Dict:
+        """分析HTML元素的自定义属性，特别是版权相关属性"""
+        soup = BeautifulSoup(html_content, 'lxml')
+        
+        custom_attrs = {
+            'copyright_attributes': [],
+            'labels_attributes': [],
+            'other_custom_attributes': []
+        }
+        
+        # 查找所有元素的属性
+        all_elements = soup.find_all()
+        
+        for elem in all_elements:
+            if elem.attrs:
+                # 查找版权相关属性
+                copyright_attrs = ['copyright', 'data-copyright', 'powered-by', 'data-powered-by']
+                for attr_name in copyright_attrs:
+                    if attr_name in elem.attrs:
+                        attr_value = elem.get(attr_name)
+                        if attr_value:
+                            custom_attrs['copyright_attributes'].append({
+                                'tag': elem.name,
+                                'attribute': attr_name,
+                                'copyright': attr_value
+                            })
+                
+                # 查找作者/名称相关属性
+                name_attrs = ['name', 'author', 'data-author', 'data-name']
+                for attr_name in name_attrs:
+                    if attr_name in elem.attrs:
+                        attr_value = elem.get(attr_name)
+                        if attr_value and len(attr_value) > 2:  # 过滤掉太短的值
+                            custom_attrs['labels_attributes'].append({
+                                'tag': elem.name,
+                                'attribute': attr_name,
+                                'labels': attr_value
+                            })
+                
+                # 查找其他可能包含版权信息的属性
+                for attr_name, attr_value in elem.attrs.items():
+                    if isinstance(attr_value, str) and any(keyword in attr_value.lower() for keyword in ['版权', 'copyright', '©']):
+                        custom_attrs['other_custom_attributes'].append({
+                            'tag': elem.name,
+                            'attribute': attr_name,
+                            'value': attr_value
+                        })
+        
+        return {
+            'custom_attributes': custom_attrs
+        }
     
     def identify_development_info(self, all_analysis: Dict) -> Dict:
-        """综合分析识别开发信息"""
-        dev_info = {
-            'primary_author': None,
-            'all_authors': [],
-            'copyright_holders': [],
-            'development_tools': [],
-            'frameworks_used': [],
-            'creation_date': None,
-            'confidence_score': 0.0
+        """识别开发相关信息和版权信息"""
+        # 收集所有作者和版权信息
+        all_authors = set()
+        copyright_holders = set()
+        frameworks_used = set()
+        
+        # HTML注释分析已移除
+        
+        # 从Meta标签中提取
+        if 'meta_tags' in all_analysis:
+            meta_info = all_analysis['meta_tags']
+            if 'meta_tags' in meta_info:  # 获取实际的meta标签列表
+                for meta in meta_info['meta_tags']:
+                    # 检查author相关属性
+                    if 'name' in meta and meta['name'].lower() in ['author', 'creator']:
+                        if 'content' in meta:
+                            all_authors.add(meta['content'])
+                    # 检查copyright相关属性
+                    if 'name' in meta and 'copyright' in meta['name'].lower():
+                        if 'content' in meta:
+                            copyright_holders.add(meta['content'])
+                    # 检查property属性
+                    if 'property' in meta:
+                        prop = meta['property'].lower()
+                        if 'author' in prop and 'content' in meta:
+                            all_authors.add(meta['content'])
+                        elif 'copyright' in prop and 'content' in meta:
+                            copyright_holders.add(meta['content'])
+        
+        # 从脚本标签中提取框架信息
+        if 'script_tags' in all_analysis:
+            script_info = all_analysis['script_tags']
+            if 'script_libraries' in script_info:
+                frameworks_used.update(script_info['script_libraries'])
+        
+        # 从CSS分析中提取框架信息
+        if 'css_analysis' in all_analysis:
+            css_info = all_analysis['css_analysis']
+            if 'css_frameworks' in css_info:
+                frameworks_used.update(css_info['css_frameworks'])
+        
+        # 从自定义属性中提取
+        if 'custom_attributes' in all_analysis:
+            custom_attrs = all_analysis['custom_attributes']
+            if 'copyright_attributes' in custom_attrs:
+                for attr in custom_attrs['copyright_attributes']:
+                    if isinstance(attr, dict) and 'copyright' in attr:
+                        copyright_holders.add(attr['copyright'])
+            if 'labels_attributes' in custom_attrs:
+                for attr in custom_attrs['labels_attributes']:
+                    if isinstance(attr, dict) and 'labels' in attr:
+                        all_authors.add(attr['labels'])
+        
+        # 转换为列表并过滤空值
+        all_authors_list = [author for author in all_authors if author and author.strip()]
+        copyright_holders_list = [holder for holder in copyright_holders if holder and holder.strip()]
+        frameworks_used_list = [framework for framework in frameworks_used if framework and framework.strip()]
+        
+        # 确定主要作者（选择最常见或最可信的）
+        primary_author = None
+        confidence = 0.0
+        
+        if all_authors_list:
+            # 简单选择第一个作者作为主要作者
+            primary_author = {
+                'name': all_authors_list[0],
+                'confidence': 0.8 if len(all_authors_list) == 1 else 0.6
+            }
+            confidence = primary_author['confidence']
+        
+        # 计算整体置信度
+        confidence_factors = []
+        if all_authors_list:
+            confidence_factors.append(0.4)
+        if copyright_holders_list:
+            confidence_factors.append(0.3)
+        if frameworks_used_list:
+            confidence_factors.append(0.2)
+        
+        overall_confidence = sum(confidence_factors) if confidence_factors else 0.0
+        
+        return {
+            'development_info': {
+                'primary_author': primary_author,
+                'all_authors': all_authors_list,
+                'copyright_holders': copyright_holders_list,
+                'frameworks_used': frameworks_used_list,
+                'confidence_score': overall_confidence
+            }
         }
+    
+    def extract_wechat_article_info(self, html_content: str, url: str) -> Dict:
+        """提取微信公众号文章基本信息"""
+        soup = BeautifulSoup(html_content, 'lxml')
         
-        # 收集所有作者信息
-        authors = []
-        
-        # 从HTML注释中提取
-        if 'html_comments' in all_analysis:
-            authors.extend(all_analysis['html_comments'].get('author_mentions', []))
-            authors.extend(all_analysis['html_comments'].get('creation_info', []))
-        
-        # 从meta标签中提取
-        if 'meta_tags' in all_analysis:
-            authors.extend(all_analysis['meta_tags'].get('meta_author', []))
-        
-        # 从脚本中提取
-        if 'script_tags' in all_analysis:
-            authors.extend(all_analysis['script_tags'].get('script_author', []))
-        
-        # 从CSS中提取
-        if 'css_content' in all_analysis:
-            authors.extend(all_analysis['css_content'].get('css_author', []))
-        
-        # 去重和清理
-        unique_authors = list(set([author.strip() for author in authors if author.strip()]))
-        dev_info['all_authors'] = unique_authors
-        
-        # 确定主要作者（选择最常出现的）
-        if unique_authors:
-            author_counts = {}
-            for author in authors:
-                author = author.strip()
-                if author:
-                    author_counts[author] = author_counts.get(author, 0) + 1
-            
-            if author_counts:
-                primary_author = max(author_counts, key=author_counts.get)
-                dev_info['primary_author'] = {
-                    'name': primary_author,
-                    'confidence': author_counts[primary_author] / len(authors),
-                    'source': 'multiple_sources'
-                }
-        
-        # 收集版权持有者
-        copyright_holders = []
-        for analysis_type in all_analysis.values():
-            if isinstance(analysis_type, dict):
-                copyright_holders.extend(analysis_type.get('copyright_statements', []))
-                copyright_holders.extend(analysis_type.get('script_copyright', []))
-                copyright_holders.extend(analysis_type.get('css_copyright', []))
-                copyright_holders.extend(analysis_type.get('meta_copyright', []))
-        
-        dev_info['copyright_holders'] = list(set([holder.strip() for holder in copyright_holders if holder.strip()]))
-        
-        # 收集开发工具和框架
-        frameworks = []
-        if 'script_tags' in all_analysis:
-            frameworks.extend(all_analysis['script_tags'].get('library_info', []))
-        if 'css_content' in all_analysis:
-            frameworks.extend(all_analysis['css_content'].get('framework_info', []))
-        if 'meta_tags' in all_analysis:
-            frameworks.extend(all_analysis['meta_tags'].get('meta_generator', []))
-        
-        dev_info['frameworks_used'] = list(set(frameworks))
-        
-        # 计算置信度
-        confidence_factors = [
-            len(dev_info['all_authors']) > 0,
-            len(dev_info['copyright_holders']) > 0,
-            dev_info['primary_author'] is not None,
-            len(dev_info['frameworks_used']) > 0
+        # 提取文章标题
+        title = "未找到标题"
+        title_selectors = [
+            'h1#activity-name',
+            '.rich_media_title',
+            'h1',
+            'title'
         ]
+        for selector in title_selectors:
+            element = soup.select_one(selector)
+            if element:
+                title = element.get_text().strip()
+                break
         
-        dev_info['confidence_score'] = sum(confidence_factors) / len(confidence_factors)
+        # 提取发布时间
+        publish_time = "未找到发布时间"
+        time_selectors = [
+            '#publish_time',
+            '.rich_media_meta_text',
+            '[data-time]',
+            '.time'
+        ]
+        for selector in time_selectors:
+            element = soup.select_one(selector)
+            if element:
+                publish_time = element.get_text().strip()
+                break
         
-        return dev_info
+        # 从脚本中提取发布时间
+        if publish_time == "未找到发布时间":
+            scripts = soup.find_all('script')
+            for script in scripts:
+                if script.string:
+                    # 查找时间戳
+                    time_match = re.search(r'publish_time["\']?\s*[:=]\s*["\']?(\d{10})', script.string)
+                    if time_match:
+                        timestamp = int(time_match.group(1))
+                        publish_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(timestamp))
+                        break
+                    # 查找日期格式
+                    date_match = re.search(r'(\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2})', script.string)
+                    if date_match:
+                        publish_time = date_match.group(1)
+                        break
+        
+        # 提取公众号名称
+        account_name = "未找到公众号名称"
+        name_selectors = [
+            '#js_name',
+            '.rich_media_meta_nickname',
+            '.account_nickname',
+            '.profile_nickname'
+        ]
+        for selector in name_selectors:
+            element = soup.select_one(selector)
+            if element:
+                account_name = element.get_text().strip()
+                break
+        
+        # 从脚本中提取公众号名称
+        if account_name == "未找到公众号名称":
+            scripts = soup.find_all('script')
+            for script in scripts:
+                if script.string:
+                    # 查找公众号名称
+                    if 'nickname' in script.string:
+                        # 简化的字符串匹配
+                        script_text = script.string
+                        if '"nickname"' in script_text or "'nickname'" in script_text:
+                            # 尝试提取引号中的内容
+                            import json
+                            try:
+                                # 尝试解析JSON格式
+                                if 'nickname' in script_text:
+                                    start = script_text.find('nickname')
+                                    if start != -1:
+                                        # 查找后续的值
+                                        remaining = script_text[start:]
+                                        if '"' in remaining:
+                                            parts = remaining.split('"')
+                                            if len(parts) >= 3:
+                                                account_name = parts[2].strip()
+                                                if account_name:
+                                                    break
+                            except:
+                                pass
+        
+        # 提取原始链接（通常就是当前URL）
+        original_url = url
+        
+        # 尝试从页面中提取规范链接
+        canonical_link = soup.find('link', {'rel': 'canonical'})
+        if canonical_link and canonical_link.get('href'):
+            original_url = canonical_link.get('href')
+        
+        return {
+            'title': title,
+            'publish_time': publish_time,
+            'account_name': account_name,
+            'original_url': original_url
+        }
     
     def analyze_html_code(self, url: str) -> Dict:
         """分析HTML源代码的完整流程"""
-        logger.info(f"开始分析HTML源代码: {url}")
-        
-        # 获取HTML源代码
-        html_content = self.fetch_html_source(url)
-        if not html_content:
-            return {'error': '无法获取HTML源代码'}
-        
-        # 执行各种分析
-        html_comments = self.analyze_html_comments(html_content)
-        meta_tags = self.analyze_meta_tags(html_content)
-        script_tags = self.analyze_script_tags(html_content)
-        css_content = self.analyze_css_content(html_content)
-        embedded_data = self.extract_embedded_data(html_content)
-        
-        all_analysis = {
-            'html_comments': html_comments,
-            'meta_tags': meta_tags,
-            'script_tags': script_tags,
-            'css_content': css_content,
-            'embedded_data': embedded_data
-        }
-        
-        # 综合分析开发信息
-        development_info = self.identify_development_info(all_analysis)
-        
-        result = {
-            'url': url,
-            'analysis_type': 'html_source_code',
-            'html_analysis': all_analysis,
-            'development_info': development_info,
-            'analysis_time': time.strftime('%Y-%m-%d %H:%M:%S'),
-            'html_size': len(html_content)
-        }
-        
-        logger.info(f"HTML源代码分析完成")
-        return result
+        try:
+            logger.info(f"Starting analysis for URL: {url}")
+            
+            # 获取HTML源代码
+            html_content = self.fetch_html_source(url)
+            if not html_content:
+                return {
+                    'error': '无法获取网页内容',
+                    'url': url,
+                    'analysis_time': time.strftime('%Y-%m-%d %H:%M:%S')
+                }
+            
+            # 执行各种分析
+            all_analysis = {}
+            # HTML注释分析已移除
+            all_analysis.update(self.analyze_meta_tags(html_content))
+            all_analysis.update(self.analyze_script_tags(html_content))
+            all_analysis.update(self.analyze_css_content(html_content))
+            all_analysis.update(self.extract_embedded_data(html_content))
+            all_analysis.update(self.analyze_custom_attributes(html_content))
+            
+            # 识别开发信息
+            dev_info = self.identify_development_info(all_analysis)
+            all_analysis.update(dev_info)
+            
+            # 如果是微信文章，提取文章信息
+            wechat_info = {}
+            if self.validate_wechat_url(url):
+                wechat_info = self.extract_wechat_article_info(html_content, url)
+            
+            # 将development_info提升到根级别以便前端访问
+            result = {
+                'url': url,
+                'analysis_type': 'HTML源代码分析',
+                'html_analysis': all_analysis,
+                'wechat_article_info': wechat_info,
+                'analysis_time': time.strftime('%Y-%m-%d %H:%M:%S'),
+                'html_size': len(html_content)
+            }
+            
+            # 如果有开发信息，将其提升到根级别
+            if 'development_info' in all_analysis:
+                result['development_info'] = all_analysis['development_info']
+            
+            return result
+            
+        except Exception as e:
+            logger.error(f"Analysis failed for {url}: {e}")
+            return {
+                'error': f'分析失败: {str(e)}',
+                'url': url,
+                'analysis_time': time.strftime('%Y-%m-%d %H:%M:%S')
+            }
     
     def __del__(self):
         """清理资源"""
@@ -541,51 +590,32 @@ class HTMLCodeAnalyzer:
             self.driver.quit()
 
 def main():
-    """主函数 - 命令行接口"""
-    import sys
-    
-    if len(sys.argv) != 2:
-        print("使用方法: python html_code_analyzer.py <微信文章链接>")
-        sys.exit(1)
-    
-    url = sys.argv[1]
+    """主函数，用于测试"""
     analyzer = HTMLCodeAnalyzer()
     
-    try:
+    # 测试URL
+    test_urls = [
+        "https://mp.weixin.qq.com/s/example",  # 微信文章示例
+        "https://www.example.com"  # 普通网站示例
+    ]
+    
+    for url in test_urls:
+        print(f"\n分析URL: {url}")
         result = analyzer.analyze_html_code(url)
         
         if 'error' in result:
             print(f"错误: {result['error']}")
-            sys.exit(1)
-        
-        # 输出结果
-        print("\n=== HTML源代码分析结果 ===")
-        print(f"URL: {result['url']}")
-        print(f"HTML大小: {result['html_size']} 字符")
-        
-        print("\n=== 开发信息 ===")
-        dev_info = result['development_info']
-        
-        if dev_info['primary_author']:
-            author = dev_info['primary_author']
-            print(f"主要作者: {author['name']} (置信度: {author['confidence']:.2f})")
-        
-        if dev_info['all_authors']:
-            print(f"所有作者: {', '.join(dev_info['all_authors'])}")
-        
-        if dev_info['copyright_holders']:
-            print(f"版权持有者: {', '.join(dev_info['copyright_holders'])}")
-        
-        if dev_info['frameworks_used']:
-            print(f"使用的框架/库: {', '.join(dev_info['frameworks_used'])}")
-        
-        print(f"\n整体置信度: {dev_info['confidence_score']:.2f}")
-        print(f"分析时间: {result['analysis_time']}")
-        
-    except Exception as e:
-        logger.error(f"分析过程中出现错误: {e}")
-        print(f"错误: {e}")
-        sys.exit(1)
+        else:
+            print(f"分析类型: {result['analysis_type']}")
+            print(f"HTML大小: {result['html_size']} 字符")
+            print(f"分析时间: {result['analysis_time']}")
+            
+            if result.get('wechat_article_info'):
+                wechat_info = result['wechat_article_info']
+                print(f"文章标题: {wechat_info.get('title', 'N/A')}")
+                print(f"发布时间: {wechat_info.get('publish_time', 'N/A')}")
+                print(f"公众号名称: {wechat_info.get('account_name', 'N/A')}")
+                print(f"原始链接: {wechat_info.get('original_url', 'N/A')}")
 
 if __name__ == "__main__":
     main()
