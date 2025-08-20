@@ -480,16 +480,21 @@ class HTMLCodeAnalyzer:
         
         # 从脚本中提取发布时间（改进的正则表达式）
         if publish_time == "未找到发布时间":
-            # 直接在HTML文本中搜索时间戳
-            time_match = re.search(r'var publish_time = (\d{10})', html_content)
-            if time_match:
-                timestamp = int(time_match.group(1))
-                publish_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(timestamp))
+            # 搜索 var createTime 格式
+            create_time_match = re.search(r"var createTime = ['\"]([^'\"]*)['\"];", html_content)
+            if create_time_match:
+                publish_time = create_time_match.group(1)
             else:
-                # 尝试其他时间格式
-                date_match = re.search(r'(\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2})', html_content)
-                if date_match:
-                    publish_time = date_match.group(1)
+                # 直接在HTML文本中搜索时间戳格式
+                time_match = re.search(r'var publish_time = (\d{10})', html_content)
+                if time_match:
+                    timestamp = int(time_match.group(1))
+                    publish_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(timestamp))
+                else:
+                    # 尝试其他时间格式
+                    date_match = re.search(r'(\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2})', html_content)
+                    if date_match:
+                        publish_time = date_match.group(1)
         
         # 提取公众号名称
         account_name = "未找到公众号名称"
